@@ -2,6 +2,13 @@ from django import forms
 from .models import Persona, Animal, Consulta, Medicina
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django import forms
+from .models import Registro
+
+class RegistroForm(forms.ModelForm):
+    class Meta:
+        model = Registro
+        fields = []
 
 class PersonaForm(forms.ModelForm):
     class Meta:

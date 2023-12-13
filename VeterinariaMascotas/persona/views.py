@@ -4,6 +4,7 @@ from .forms import PersonaForm, AnimalForm, ConsultaForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import RegistrationForm
+from .forms import RegistroForm
 
 
 # Create your views here.
@@ -28,6 +29,35 @@ def register(request):
 #        form = RegistrationForm()
 #    return render(request, 'albumes/register.html', {'form': form})
 
+def mi_vista(request):
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            form.instance.usuario = request.user
+            form.save()
+            return redirect('mi_vista')
+    else:
+        form = RegistroForm()
+
+    return render(request, 'mi_app/mi_template.html', {'form': form})
+
+@login_required
+def mi_vista(request):
+    # Obtener la fecha y hora actual
+    from datetime import datetime
+    now = datetime.now()
+
+    # Obtener el nombre de usuario actual
+    username = request.user.username
+
+    # Pasar los datos al contexto
+    context = {
+        'current_datetime': now,
+        'username': username,
+    }
+
+    # Renderizar el template con el contexto
+    return render(request, 'persona/vist.html', context)
     
 @login_required
 def lista_personas(request):

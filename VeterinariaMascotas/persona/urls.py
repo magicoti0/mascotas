@@ -3,6 +3,7 @@ from . import views
 #from django.contrib.auth import views as vista
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import mi_vista
 
 urlpatterns = [
     path('',views.lista_personas, name='lista_personas'),
@@ -21,6 +22,7 @@ urlpatterns = [
     path('consulta/<int:pk>/edit/', views.consulta_edit, name="consulta_edit"),
     path('consulta/<int:pk>/delete/', views.consulta_delete, name="consulta_delete"),
     path('registro/', views.register, name='registro' ),
+    path('mi-vista/', mi_vista, name='mi_vista'),
 ]
 
 

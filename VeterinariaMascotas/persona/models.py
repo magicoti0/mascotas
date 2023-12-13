@@ -1,5 +1,11 @@
 from django.db import models
 from django.contrib import admin
+from django.contrib.auth.models import User
+
+class Registro(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+
 
 # Create your models here.
 class Persona(models.Model):
