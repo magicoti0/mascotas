@@ -112,7 +112,10 @@ def persona_edit(request, pk):
 @login_required
 def lista_animales(request):
     animales = Animal.objects.all()
-    return render(request, 'persona/lista_animales.html', {'animales':animales})
+    for animal in animales:
+        animal.edad = animal.calcular_edad()
+    return render(request, 'persona/lista_animales.html', {'animales': animales})
+
 
 @login_required
 def detalle_animal(request, pk):

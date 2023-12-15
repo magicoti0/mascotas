@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
+from datetime import datetime
 
 class Registro(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -37,6 +38,11 @@ class Animal(models.Model):
     peso = models.DecimalField(max_digits=5, decimal_places=2)
     observaciones = models.TextField()
     imagen = models.ImageField(upload_to='animal_images/', null=True, blank=True)
+
+    def calcular_edad(self):
+        today = datetime.today()
+        age = today.year - self.fechaNacimiento.year - ((today.month, today.day) < (self.fechaNacimiento.month, self.fechaNacimiento.day))
+        return age
 
     def __str__(self):
         return self.nombreAnimal
