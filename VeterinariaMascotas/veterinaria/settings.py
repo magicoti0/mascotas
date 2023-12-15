@@ -28,6 +28,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['estuardocv97.pythonanywhere.com','127.0.0.1', '.pythonanywhere.com']
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'persona',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [

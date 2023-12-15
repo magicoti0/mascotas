@@ -5,6 +5,20 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import RegistrationForm
 from .forms import RegistroForm
+from rest_framework import generics
+from .serializers import BlogPostSerializer
+
+from rest_framework.decorators import api_view, permission_classes 
+
+from rest_framework.response import Response
+from .models import BlogPost
+from .serializers import BlogPost
+#DRF
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 # Create your views here.
@@ -187,3 +201,68 @@ def consulta_delete(request, pk):
     consulta = get_object_or_404(Consulta, pk=pk)
     consulta.delete()
     return redirect('lista_consultas')
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])  # Añade la autenticación requerida
+def posts_list(request):
+    if request.method == 'GET':
+        books = BlogPost.objects.all()
+        serializer = BlogPostSerializer(books, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = BlogPostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def posts_detail(request, pk):
+    try:
+        book = BlogPost.objects.get(pk=pk)
+    except BlogPost.DoesNotExist:
+        return Response(status=404)
+
+    if request.method == 'GET':
+        serializer = BlogPostSerializer(book)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = BlogPostSerializer(book, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        book.delete()
+        return Response(status=204)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def obtener_token(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    if username is None or password is None:
+        return Response({'error': 'Se requieren los campos "username" y "password".'}, status=400)
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({'error': 'Credenciales inválidas.'}, status=400)
+
+    if not user.check_password(password):
+        return Response({'error': 'Credenciales inválidas.'}, status=400)
+
+    # Generar tokens
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+
+    return Response(
+    {
+        'access_token': access_token,
+        'refresh_token': str(refresh)
+    })
